@@ -22,6 +22,16 @@ impl ThreadPoolMiddleware {
             pool: AssertUnwindSafe(pool),
         }
     }
+
+    pub fn new_with_num_cpus() -> Self {
+        let pool = futures_cpupool::CpuPool::new_num_cpus();
+        Self::new(pool)
+    }
+
+    pub fn new_with_size(size: usize) -> Self {
+        let pool = futures_cpupool::CpuPool::new(size);
+        Self::new(pool)
+    }
 }
 
 impl Middleware for ThreadPoolMiddleware {
