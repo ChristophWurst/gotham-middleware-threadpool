@@ -1,3 +1,4 @@
+extern crate futures;
 extern crate futures_cpupool;
 extern crate gotham;
 #[macro_use]
@@ -6,6 +7,7 @@ extern crate gotham_derive;
 use std::io;
 use std::panic::AssertUnwindSafe;
 
+use futures::future::{Future, IntoFuture};
 use gotham::handler::HandlerFuture;
 use gotham::middleware::{Middleware, NewMiddleware};
 use gotham::state::State;
@@ -66,7 +68,23 @@ impl ThreadPoolMiddlewareData {
         ThreadPoolMiddlewareData { pool: pool }
     }
 
-    pub fn pool(&self) -> CpuPool {
-        self.pool.clone()
+    pub fn spawn<F>(&self, f: F) -> Box<Future<Item = F::Item, Error = F::Error>>
+    where
+        F: Future + Send + 'static,
+        F::Item: Send + 'static,
+        F::Error: Send + 'static,
+    {
+        Box::new(self.pool.spawn(f))
+    }
+
+    pub fn spawn_fn<F, R>(&self, f: F) -> Box<Future<Item = R::Item, Error = R::Error>>
+    where
+        F: FnOnce() -> R + Send + 'static,
+        R: IntoFuture + 'static,
+        R::Future: Send + 'static,
+        R::Item: Send + 'static,
+        R::Error: Send + 'static,
+    {
+        Box::new(self.pool.spawn_fn(f))
     }
 }

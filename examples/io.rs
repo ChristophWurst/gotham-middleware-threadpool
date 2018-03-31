@@ -21,9 +21,8 @@ use hyper::StatusCode;
 pub fn say_hello(state: State) -> Box<HandlerFuture> {
     let f = {
         let mwd: &ThreadPoolMiddlewareData = ThreadPoolMiddlewareData::borrow_from(&state);
-        let pool = mwd.pool();
 
-        pool.spawn_fn(move || {
+        mwd.spawn_fn(move || {
             let mut file = File::open("Cargo.toml")?;
             let mut contents = String::new();
             file.read_to_string(&mut contents)?;
