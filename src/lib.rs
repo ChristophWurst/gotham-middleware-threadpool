@@ -23,12 +23,12 @@ impl ThreadPoolMiddleware {
         }
     }
 
-    pub fn new_with_num_cpus() -> Self {
+    pub fn with_num_cpus() -> Self {
         let pool = futures_cpupool::CpuPool::new_num_cpus();
         Self::new(pool)
     }
 
-    pub fn new_with_size(size: usize) -> Self {
+    pub fn with_size(size: usize) -> Self {
         let pool = futures_cpupool::CpuPool::new(size);
         Self::new(pool)
     }
@@ -65,10 +65,8 @@ impl ThreadPoolMiddlewareData {
     pub fn new(pool: CpuPool) -> Self {
         ThreadPoolMiddlewareData { pool: pool }
     }
-}
 
-impl ThreadPoolMiddlewareData {
-    pub fn get_pool(&self) -> CpuPool {
+    pub fn pool(&self) -> CpuPool {
         self.pool.clone()
     }
 }
