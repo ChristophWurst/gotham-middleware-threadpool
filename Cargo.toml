@@ -10,5 +10,7 @@ gotham = "^0.2"
 gotham_derive = "^0.2"
 
 [dev-dependencies]
+diesel = { version = "*", features = ["sqlite"] }
+gotham_middleware_diesel = { git = "https://github.com/ChristophWurst/gotham.git", branch = "diesel-gotham-2.0" }
 hyper = "*"
 mime = "*"
